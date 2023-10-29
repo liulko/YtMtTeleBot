@@ -42,17 +42,15 @@ def get_mp3(input_from_user):
     title = yt.vid_info['videoDetails']['title']
     video_title = artist + '-' + title
 
-
+    # create temporary folder
     folder_path = f'{datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}/'
     print(folder_path)
     try:
         os.mkdir(folder_path)
-    except:
+    finally:
         pass
 
-    print(yt.streams)
-    print(video_title)
-
+    # get cover
     thumbnail = yt.vid_info['videoDetails']['thumbnail']['thumbnails']
     sorted_thumbnail = sorted(thumbnail, key=lambda d: d['width'], reverse=True)
     mp3_cover_url = sorted_thumbnail[0]['url']
@@ -60,11 +58,15 @@ def get_mp3(input_from_user):
     file_mp3_cover = open(f"{folder_path}{video_title}_cover.jpg", "wb")
     file_mp3_cover.write(response.content)
     file_mp3_cover.close()
+
+    # download mp4
     yt.streams.filter(type='audio', file_extension='mp4').order_by('abr').desc().first().download(
         filename=f'{folder_path}{video_title}.mp4')
-    print(yt.vid_info)
+
+    # convert mp4 to mp3
     mp4_to_mp3(f'{folder_path}{video_title}.mp4', f'{folder_path}{video_title}.mp3')
 
+    # add tags to mp3
     add_tags(f'{folder_path}{video_title}.mp3', artist, title, f"{folder_path}{video_title}_cover.jpg")
 
     return {
@@ -73,5 +75,4 @@ def get_mp3(input_from_user):
         'artist': artist,
         'mp3_path': f'{folder_path}{video_title}.mp3',
         'folder_path': folder_path
-
     }
