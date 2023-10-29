@@ -11,7 +11,7 @@ token = '1549377862:AAGoupqWih_2TpUut9GkbbGYxmVmemrn5FA'
 print("started")
 
 bot = telebot.TeleBot(token)
-chat_id = -1002041935041
+chat_id = -1001555273110
 
 
 #   dsfg channel id             -1002041935041
