@@ -46,11 +46,8 @@ def get_mp3(input_from_user):
     title = yt.vid_info['videoDetails']['title']
     video_title = artist + '-' + title
 
-
-
     # create temporary folder
     folder_path = f'{datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}/'
-    print(folder_path)
     try:
         os.mkdir(folder_path)
     finally:
@@ -58,14 +55,20 @@ def get_mp3(input_from_user):
 
     file_audio_title = f"{folder_path}{video_title.replace('/', '-')}"
 
-    # get cover
-    thumbnail = yt.vid_info['videoDetails']['thumbnail']['thumbnails']
-    sorted_thumbnail = sorted(thumbnail, key=lambda d: d['width'], reverse=True)
-    mp3_cover_url = sorted_thumbnail[0]['url']
-    response = requests.get(mp3_cover_url)
-    file_mp3_cover = open(f"{file_audio_title}_cover.jpg", "wb")
-    file_mp3_cover.write(response.content)
-    file_mp3_cover.close()
+    # get thumbnail
+    thumbnails = yt.vid_info['videoDetails']['thumbnail']['thumbnails']
+    print(thumbnails)
+    sorted_thumbnail = sorted(thumbnails, key=lambda d: d['width'], reverse=True)
+    thumbnail_file_path = 'images/default_thumbnail.jpg'
+    for i in sorted_thumbnail:
+        if i['width'] <= 320 and i['height'] <= 320:
+            thumbnail_response = requests.get(i['url'])
+            file_mp3_cover = open(f"{file_audio_title}_cover.jpg", "wb")
+            file_mp3_cover.write(thumbnail_response.content)
+            file_mp3_cover.close()
+            thumbnail_file_path = f"{file_audio_title}_cover.jpg"
+            print('yeap')
+            break
 
     # download mp4
     yt.streams.filter(type='audio', file_extension='mp4').order_by('abr').desc().first().download(
@@ -75,12 +78,13 @@ def get_mp3(input_from_user):
     mp4_to_mp3(f'{file_audio_title}.mp4', f'{file_audio_title}.mp3')
 
     # add tags to mp3
-    add_tags(f'{file_audio_title}.mp3', artist, title, f"{file_audio_title}_cover.jpg")
+    add_tags(f'{file_audio_title}.mp3', artist, title, thumbnail_file_path)
 
     return {
         'video_url': video_url,
         'title': title,
         'artist': artist,
         'mp3_path': f'{file_audio_title}.mp3',
-        'folder_path': folder_path
+        'folder_path': folder_path,
+        'thumbnail_file_path': thumbnail_file_path
     }
