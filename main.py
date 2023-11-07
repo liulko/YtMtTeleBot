@@ -24,7 +24,8 @@ def channel(message):
             audio_file,
             caption=f'[anything else](https://t.me/else_anything) | [ytm]({mp3_info["video_url"]}) | _{message.author_signature}_',
             parse_mode='Markdown',
-            thumbnail=thumbnail_file
+            thumbnail=thumbnail_file,
+            disable_notification=True
         )
         audio_file.close()
         thumbnail_file.close()
