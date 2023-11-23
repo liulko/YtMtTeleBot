@@ -1,3 +1,5 @@
+import random
+
 import pytube
 import requests
 import validators
@@ -47,7 +49,7 @@ def get_mp3(input_from_user):
     video_title = artist + '-' + title
 
     # create temporary folder
-    folder_path = f'{datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}/'
+    folder_path = f'{datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}_{random.randint(0, 1000)}/'
     try:
         os.mkdir(folder_path)
     finally:
