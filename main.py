@@ -3,19 +3,28 @@ import shutil
 import telebot
 from make_mp3 import get_mp3
 import tokens_and_ids
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 print("bot started")
 
 bot = telebot.TeleBot(tokens_and_ids.token)
 channel_id = tokens_and_ids.channel_id
 
-def gen_markup():
+
+def gen_inline_markup():
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     markup.add(InlineKeyboardButton("Music", callback_data="cb_music"),
-                     InlineKeyboardButton("No", callback_data="cb_no"))
+               InlineKeyboardButton("No", callback_data="cb_no"))
     return markup
+
+
+def gen_start_reply_markup():
+    markup = ReplyKeyboardMarkup()
+    markup.add(KeyboardButton('/start'))
+    markup.resize_keyboard = True
+    return markup
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
@@ -27,17 +36,25 @@ def callback_query(call):
         bot.answer_callback_query(call.id, "Answer is No")
 
 
+def get_signature(user):
+    if type(user) is telebot.types.User:
+        if user.username:
+            signature = f'by @{user.username}'
+        elif user.last_name:
+            signature = f'by {user.first_name} {user.last_name}'
+        else:
+            signature = f'by {user.first_name}'
+        return signature
+    else:
+        return 'signature'
+
+
 def music_link_handler(message):
     mp3_info = get_mp3(message.text)
     audio_file = open(mp3_info['mp3_path'], 'rb')
     thumbnail_file = open(mp3_info['thumbnail_file_path'], 'rb')
 
-    if message.from_user.username:
-        signature = f'by @{message.from_user.username}'
-    elif message.from_user.last_name:
-        signature = f'by {message.from_user.first_name} {message.from_user.last_name}'
-    else:
-        signature = f'by {message.from_user.first_name}'
+    signature = get_signature(message.from_user)
 
     bot.send_audio(
         channel_id,
@@ -52,9 +69,11 @@ def music_link_handler(message):
 
     shutil.rmtree(mp3_info['folder_path'])
 
+
 @bot.message_handler(commands=['start'])
 def message_handler(message):
-    bot.send_message(message.chat.id, "?", reply_markup=gen_markup())
+    start_ans = bot.send_message(message.chat.id, "ok", reply_markup=gen_start_reply_markup())
+    bot.send_message(start_ans.chat.id, 'sho?', reply_markup=gen_inline_markup())
 
 
 bot.infinity_polling()
