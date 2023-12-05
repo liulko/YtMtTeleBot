@@ -44,18 +44,23 @@ def get_signature(user):
             signature = f'by {user.first_name} {user.last_name}'
         else:
             signature = f'by {user.first_name}'
+
+        if '_' in signature:
+            signature = signature.replace('_', '_\\__')
+            print(signature)
         return signature
     else:
         return 'signature'
 
 
 def music_link_handler(message):
+    print(f'work on {message.text}')
     mp3_info = get_mp3(message.text)
     audio_file = open(mp3_info['mp3_path'], 'rb')
     thumbnail_file = open(mp3_info['thumbnail_file_path'], 'rb')
 
     signature = get_signature(message.from_user)
-
+    print(signature)
     bot.send_audio(
         channel_id,
         audio_file,
@@ -64,16 +69,16 @@ def music_link_handler(message):
         thumbnail=thumbnail_file,
         disable_notification=True
     )
-    audio_file.close()
+    bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
     thumbnail_file.close()
+    audio_file.close()
 
     shutil.rmtree(mp3_info['folder_path'])
 
 
 @bot.message_handler(commands=['start'])
 def message_handler(message):
-    start_ans = bot.send_message(message.chat.id, "ok", reply_markup=gen_start_reply_markup())
-    bot.send_message(start_ans.chat.id, 'sho?', reply_markup=gen_inline_markup())
+    bot.send_message(message.chat.id, 'sho?', reply_markup=gen_inline_markup())
 
 
 bot.infinity_polling()

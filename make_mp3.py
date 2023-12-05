@@ -59,7 +59,7 @@ def get_mp3(input_from_user):
 
     # get thumbnail
     thumbnails = yt.vid_info['videoDetails']['thumbnail']['thumbnails']
-    print(thumbnails)
+    # print(thumbnails)
     sorted_thumbnail = sorted(thumbnails, key=lambda d: d['width'], reverse=True)
     thumbnail_file_path = 'images/default_thumbnail.jpg'
     for i in sorted_thumbnail:
