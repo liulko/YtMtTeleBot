@@ -10,7 +10,9 @@ def get_lyrics(video_id):
         lyrics_html = lyrics_text.replace('\n', '<br>').replace('\r', '')
 
         with open(f'../www/lyrics/{video_id}.html', 'w', encoding='utf-8') as f:
+            f.write('<!DOCTYPE html><html><head><title>Lyrics</title><meta charset="UTF-8"></head><body>')
             f.write(lyrics_html)
+            f.write('</body></html>')
 
         return lyrics_html
     else:
