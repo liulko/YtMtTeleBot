@@ -44,6 +44,7 @@ def get_mp3(input_from_user):
         yt = pytube.Search(input_from_user).results[0]
 
     video_url = 'https://music.youtube.com/watch?v=' + yt.vid_info['videoDetails']['videoId']
+    video_id = yt.vid_info['videoDetails']['videoId']
     artist = yt.vid_info['videoDetails']['author']
     title = yt.vid_info['videoDetails']['title']
     video_title = artist + '-' + title
@@ -84,6 +85,7 @@ def get_mp3(input_from_user):
 
     return {
         'video_url': video_url,
+        'video_id': video_id,
         'title': title,
         'artist': artist,
         'mp3_path': f'{file_audio_title}.mp3',

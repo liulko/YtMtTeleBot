@@ -54,6 +54,7 @@ def get_signature(user):
 
 
 def music_link_handler(message):
+    print(f'work on {message}')
     print(f'work on {message.text}')
     mp3_info = get_mp3(message.text)
     audio_file = open(mp3_info['mp3_path'], 'rb')
@@ -61,11 +62,16 @@ def music_link_handler(message):
 
     signature = get_signature(message.from_user)
     print(signature)
+
+    caption = (f"<blockquote>{mp3_info['video_id']}</blockquote>"
+               f"<a href='https://t.me/else_anything'>anything else</a> | "
+               f"<a href='{mp3_info['video_url']}'>ytm</a> | "
+               f"<em>{signature}</em>")
     bot.send_audio(
         channel_id,
         audio_file,
-        caption=f'[anything else](https://t.me/else_anything) | [ytm]({mp3_info["video_url"]}) | _{signature}_',
-        parse_mode='Markdown',
+        caption=caption,
+        parse_mode='HTML',
         thumbnail=thumbnail_file,
         disable_notification=True
     )
