@@ -4,6 +4,7 @@ import telebot
 from make_mp3 import get_mp3
 import tokens_and_ids
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+import ytmusicapi2
 
 print("bot started")
 
@@ -54,7 +55,6 @@ def get_signature(user):
 
 
 def music_link_handler(message):
-    print(f'work on {message}')
     print(f'work on {message.text}')
     mp3_info = get_mp3(message.text)
     audio_file = open(mp3_info['mp3_path'], 'rb')
@@ -63,7 +63,15 @@ def music_link_handler(message):
     signature = get_signature(message.from_user)
     print(signature)
 
-    caption = (f"<blockquote>{mp3_info['video_id']}</blockquote>"
+    lyrics = ytmusicapi2.get_lyrics(mp3_info['video_id'])
+    if lyrics:
+        lyrics_for_quote = lyrics.replace('<br><br>', '<br>')
+        inner_blockquote = f"<em><a href='http://shkerebert.pp.ua/lyrics/{mp3_info['video_id']}'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
+        blockquote = f"<blockquote>{inner_blockquote}</blockquote>\n"
+    else:
+        blockquote = ""
+
+    caption = (f"{blockquote}"
                f"<a href='https://t.me/else_anything'>anything else</a> | "
                f"<a href='{mp3_info['video_url']}'>ytm</a> | "
                f"<em>{signature}</em>")

@@ -7,10 +7,11 @@ def get_lyrics(video_id):
     if lyrics_id:
         lyrics_dict = ytmusic.get_lyrics(lyrics_id)
         lyrics_text = lyrics_dict['lyrics']
-        lyrics_text_html = lyrics_dict['lyrics'].replace('\n', '<br>')
-        with open(f'../www/{video_id}.html', 'w') as f:
-            f.write(lyrics_text_html)
+        lyrics_html = lyrics_text.replace('\n', '<br>').replace('\r', '')
 
-        return lyrics_text
+        with open(f'../www/lyrics/{video_id}.html', 'w', encoding='utf-8') as f:
+            f.write(lyrics_html)
+
+        return lyrics_html
     else:
         return None
