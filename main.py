@@ -66,7 +66,7 @@ def music_link_handler(message):
     lyrics = ytmusicapi2.get_lyrics(mp3_info['video_id'])
     if lyrics:
         lyrics_for_quote = lyrics.replace('<br><br>', '<br>')
-        inner_blockquote = f"<em><a href='http://shkerebert.pp.ua/lyrics/{mp3_info['video_id']}'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
+        inner_blockquote = f"<em><a href='http://shkerebert.pp.ua/lyrics/{mp3_info['video_id']}.html'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
         blockquote = f"<blockquote>{inner_blockquote}</blockquote>\n"
     else:
         blockquote = ""
