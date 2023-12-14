@@ -5,6 +5,7 @@ from make_mp3 import get_mp3
 import tokens_and_ids
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import ytmusicapi2
+import telegraph_api
 
 print("bot started")
 
@@ -65,11 +66,12 @@ def music_link_handler(message):
 
     lyrics = ytmusicapi2.get_lyrics(mp3_info['video_id'])
     if lyrics:
-        lyrics_for_quote = lyrics.replace('<br><br>', '<br>')
-        inner_blockquote = f"<em><a href='https://shkerebert.pp.ua/lyrics/{mp3_info['video_id']}.html'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
+        telegraph_lyrics_page_link = telegraph_api.create_lyrics_page(lyrics, title=f"{mp3_info['artist']} - {mp3_info['title']}", author_name='anything else', author_url='https://t.me/else_anything')
+        lyrics_for_quote = lyrics.strip().replace('<br><br>', '<br>')
+        inner_blockquote = f"<em><a href='{telegraph_lyrics_page_link}'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
         blockquote = f"<blockquote>{inner_blockquote}</blockquote>\n"
     else:
-        blockquote = ""
+        blockquote = ''
 
     caption = (f"{blockquote}"
                f"<a href='https://t.me/else_anything'>anything else</a> | "
