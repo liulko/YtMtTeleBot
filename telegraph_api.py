@@ -21,7 +21,7 @@ def create_lyrics_page(lyrics, title, author_name, author_url):
                                      author_name=author_name,
                                      author_url=author_url,
                                      html_content=lyrics)['url']
-    print('created lyrics page on: ' + page_url)
+    # print('created lyrics page on: ' + page_url)
     return page_url
 
 # print(create_lyrics_page(lyrics=ytmusicapi2.get_lyrics('A4ud4WxXTEk'), author_name='Христина', title='Тримай'))

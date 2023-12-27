@@ -47,37 +47,49 @@ def get_signature(user):
         else:
             signature = f'by {user.first_name}'
 
-        if '_' in signature:
-            signature = signature.replace('_', '_\\__')
-            print(signature)
         return signature
     else:
         return 'signature'
 
 
 def music_link_handler(message):
-    print(f'work on {message.text}')
+    info_message = bot.send_message(message.chat.id, f'😯 | work on {message.text}', disable_web_page_preview=True)
     mp3_info = get_mp3(message.text)
     audio_file = open(mp3_info['mp3_path'], 'rb')
+    info_message = bot.edit_message_text(info_message.text + '\n✅ | audio downloaded', info_message.chat.id,
+                                         info_message.id, disable_web_page_preview=True)
     thumbnail_file = open(mp3_info['thumbnail_file_path'], 'rb')
-
+    if mp3_info['thumbnail_default']:
+        info_message = bot.edit_message_text(info_message.text + '\n⚠️ | thumbnail default', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
+    else:
+        info_message = bot.edit_message_text(info_message.text + '\n✅ | thumbnail received', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
     signature = get_signature(message.from_user)
-    print(signature)
+    info_message = bot.edit_message_text(info_message.text + '\n✅ | signature received', info_message.chat.id,
+                                         info_message.id, disable_web_page_preview=True)
 
     lyrics = ytmusicapi2.get_lyrics(mp3_info['video_id'])
     if lyrics:
-        telegraph_lyrics_page_link = telegraph_api.create_lyrics_page(lyrics, title=f"{mp3_info['artist']} - {mp3_info['title']}", author_name='anything else', author_url='https://t.me/else_anything')
+        info_message = bot.edit_message_text(info_message.text + '\n✅ | lyrics found', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
+        telegraph_lyrics_page_link = telegraph_api.create_lyrics_page(lyrics,
+                                                                      title=f"{mp3_info['artist']} - {mp3_info['title']}",
+                                                                      author_name='anything else',
+                                                                      author_url='https://t.me/else_anything')
         lyrics_for_quote = lyrics.strip().replace('<br><br>', '<br>')
         inner_blockquote = f"<em><a href='{telegraph_lyrics_page_link}'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
         blockquote = f"<blockquote>{inner_blockquote}</blockquote>\n"
     else:
+        info_message = bot.edit_message_text(info_message.text + '\n⚠️ | lyrics not found', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
         blockquote = ''
 
     caption = (f"{blockquote}"
                f"<a href='https://t.me/else_anything'>anything else</a> | "
                f"<a href='{mp3_info['video_url']}'>ytm</a> | "
                f"<em>{signature}</em>")
-    bot.send_audio(
+    audio_message = bot.send_audio(
         channel_id,
         audio_file,
         caption=caption,
@@ -85,6 +97,13 @@ def music_link_handler(message):
         thumbnail=thumbnail_file,
         disable_notification=True
     )
+    info_message = bot.edit_message_text(info_message.text + '\n✅ | audio successfully posted', info_message.chat.id,
+                                         info_message.id, disable_web_page_preview=True)
+    caption = (f"{blockquote}"
+               f"<a href='https://t.me/else_anything/{audio_message.message_id}'>anything else</a> | "
+               f"<a href='{mp3_info['video_url']}'>ytm</a> | "
+               f"<em>{signature}</em>")
+    bot.edit_message_caption(caption, audio_message.chat.id, audio_message.message_id, parse_mode='HTML')
     bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
     thumbnail_file.close()
     audio_file.close()
