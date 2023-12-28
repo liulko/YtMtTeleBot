@@ -6,6 +6,7 @@ import tokens_and_ids
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import ytmusicapi2
 import telegraph_api
+from pytube.exceptions import AgeRestrictedError, VideoUnavailable
 
 print("bot started")
 
@@ -54,7 +55,24 @@ def get_signature(user):
 
 def music_link_handler(message):
     info_message = bot.send_message(message.chat.id, f'😯 | work on {message.text}', disable_web_page_preview=True)
-    mp3_info = get_mp3(message.text)
+    try:
+        mp3_info = get_mp3(message.text)
+    except AgeRestrictedError:
+        info_message = bot.edit_message_text(info_message.text + '\n❌ | video is age restricted', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
+        bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+        return
+    except VideoUnavailable:
+        info_message = bot.edit_message_text(info_message.text + '\n❌ | video unavailable error', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
+        bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+        return
+    except:
+        info_message = bot.edit_message_text(info_message.text + '\n❌ | unknown error', info_message.chat.id,
+                                             info_message.id, disable_web_page_preview=True)
+        bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+        return
+
     audio_file = open(mp3_info['mp3_path'], 'rb')
     info_message = bot.edit_message_text(info_message.text + '\n✅ | audio downloaded', info_message.chat.id,
                                          info_message.id, disable_web_page_preview=True)
