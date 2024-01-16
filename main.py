@@ -1,4 +1,3 @@
-import os
 import shutil
 import telebot
 from make_mp3 import get_mp3
@@ -56,21 +55,19 @@ def get_signature(user):
 def music_link_handler(message):
     info_message = bot.send_message(message.chat.id, f'😯 | work on {message.text}', disable_web_page_preview=True)
     try:
+        info_message = bot.edit_message_text(message.chat.id, f'📦 | downloading...', disable_web_page_preview=True)
         mp3_info = get_mp3(message.text)
     except AgeRestrictedError:
         info_message = bot.edit_message_text(info_message.text + '\n❌ | video is age restricted', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
-        bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+                                             info_message.id, disable_web_page_preview=True, reply_markup=gen_inline_markup())
         return
     except VideoUnavailable:
         info_message = bot.edit_message_text(info_message.text + '\n❌ | video unavailable error', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
-        bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+                                             info_message.id, disable_web_page_preview=True, reply_markup=gen_inline_markup())
         return
     except:
         info_message = bot.edit_message_text(info_message.text + '\n❌ | unknown error', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
-        bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+                                             info_message.id, disable_web_page_preview=True, reply_markup=gen_inline_markup())
         return
 
     audio_file = open(mp3_info['mp3_path'], 'rb')
@@ -116,13 +113,14 @@ def music_link_handler(message):
         disable_notification=True
     )
     info_message = bot.edit_message_text(info_message.text + '\n✅ | audio successfully posted', info_message.chat.id,
-                                         info_message.id, disable_web_page_preview=True)
+                                         info_message.id, reply_markup=gen_inline_markup(),
+                                         disable_web_page_preview=True)
     caption = (f"{blockquote}"
                f"<a href='https://t.me/else_anything/{audio_message.message_id}'>anything else</a> | "
                f"<a href='{mp3_info['video_url']}'>ytm</a> | "
                f"<em>{signature}</em>")
     bot.edit_message_caption(caption, audio_message.chat.id, audio_message.message_id, parse_mode='HTML')
-    bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
+    # bot.send_message(message.chat.id, 'shos\' she?', reply_markup=gen_inline_markup(), disable_notification=True)
     thumbnail_file.close()
     audio_file.close()
 
