@@ -53,41 +53,36 @@ def get_signature(user):
 
 
 def music_link_handler(message):
-    info_message = bot.send_message(message.chat.id, f'😯 | work on {message.text}', disable_web_page_preview=True)
+    info_msg = bot.send_message(message.chat.id, f'😯 | work on {message.text}', disable_web_page_preview=True)
     try:
-        info_message = bot.edit_message_text(message.chat.id, f'📦 | downloading...', disable_web_page_preview=True)
+        info_msg = bot.edit_message_text(info_msg.text + f'\n📦 | downloading...', info_msg.chat.id, info_msg.id,
+                                         disable_web_page_preview=True)
         mp3_info = get_mp3(message.text)
-    except AgeRestrictedError:
-        info_message = bot.edit_message_text(info_message.text + '\n❌ | video is age restricted', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True, reply_markup=gen_inline_markup())
-        return
-    except VideoUnavailable:
-        info_message = bot.edit_message_text(info_message.text + '\n❌ | video unavailable error', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True, reply_markup=gen_inline_markup())
-        return
-    except:
-        info_message = bot.edit_message_text(info_message.text + '\n❌ | unknown error', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True, reply_markup=gen_inline_markup())
+    except Exception as e:
+        print(e)
+        bot.edit_message_text(info_msg.text + f'\n❌ | {e}', info_msg.chat.id,
+                              info_msg.id, disable_web_page_preview=True,
+                              reply_markup=gen_inline_markup())
         return
 
     audio_file = open(mp3_info['mp3_path'], 'rb')
-    info_message = bot.edit_message_text(info_message.text + '\n✅ | audio downloaded', info_message.chat.id,
-                                         info_message.id, disable_web_page_preview=True)
+    info_msg = bot.edit_message_text(info_msg.text + '\n✅ | audio downloaded', info_msg.chat.id,
+                                     info_msg.id, disable_web_page_preview=True)
     thumbnail_file = open(mp3_info['thumbnail_file_path'], 'rb')
     if mp3_info['thumbnail_default']:
-        info_message = bot.edit_message_text(info_message.text + '\n⚠️ | thumbnail default', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
+        info_msg = bot.edit_message_text(info_msg.text + '\n⚠️ | thumbnail default', info_msg.chat.id,
+                                         info_msg.id, disable_web_page_preview=True)
     else:
-        info_message = bot.edit_message_text(info_message.text + '\n✅ | thumbnail received', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
+        info_msg = bot.edit_message_text(info_msg.text + '\n✅ | thumbnail received', info_msg.chat.id,
+                                         info_msg.id, disable_web_page_preview=True)
     signature = get_signature(message.from_user)
-    info_message = bot.edit_message_text(info_message.text + '\n✅ | signature received', info_message.chat.id,
-                                         info_message.id, disable_web_page_preview=True)
+    info_msg = bot.edit_message_text(info_msg.text + '\n✅ | signature received', info_msg.chat.id,
+                                     info_msg.id, disable_web_page_preview=True)
 
     lyrics = ytmusicapi2.get_lyrics(mp3_info['video_id'])
     if lyrics:
-        info_message = bot.edit_message_text(info_message.text + '\n✅ | lyrics found', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
+        info_msg = bot.edit_message_text(info_msg.text + '\n✅ | lyrics found', info_msg.chat.id,
+                                         info_msg.id, disable_web_page_preview=True)
         telegraph_lyrics_page_link = telegraph_api.create_lyrics_page(lyrics,
                                                                       title=f"{mp3_info['artist']} - {mp3_info['title']}",
                                                                       author_name='anything else',
@@ -96,8 +91,8 @@ def music_link_handler(message):
         inner_blockquote = f"<em><a href='{telegraph_lyrics_page_link}'>{lyrics_for_quote.split('<br>')[0]}\n{lyrics_for_quote.split('<br>')[1]}...</a></em>"
         blockquote = f"<blockquote>{inner_blockquote}</blockquote>\n"
     else:
-        info_message = bot.edit_message_text(info_message.text + '\n⚠️ | lyrics not found', info_message.chat.id,
-                                             info_message.id, disable_web_page_preview=True)
+        info_msg = bot.edit_message_text(info_msg.text + '\n⚠️ | lyrics not found', info_msg.chat.id,
+                                         info_msg.id, disable_web_page_preview=True)
         blockquote = ''
 
     caption = (f"{blockquote}"
@@ -112,9 +107,9 @@ def music_link_handler(message):
         thumbnail=thumbnail_file,
         disable_notification=True
     )
-    info_message = bot.edit_message_text(info_message.text + '\n✅ | audio successfully posted', info_message.chat.id,
-                                         info_message.id, reply_markup=gen_inline_markup(),
-                                         disable_web_page_preview=True)
+    info_msg = bot.edit_message_text(info_msg.text + '\n✅ | audio successfully posted', info_msg.chat.id,
+                                     info_msg.id, reply_markup=gen_inline_markup(),
+                                     disable_web_page_preview=True)
     caption = (f"{blockquote}"
                f"<a href='https://t.me/else_anything/{audio_message.message_id}'>anything else</a> | "
                f"<a href='{mp3_info['video_url']}'>ytm</a> | "
