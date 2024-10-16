@@ -9,8 +9,8 @@ from pytube.exceptions import AgeRestrictedError, VideoUnavailable
 
 print("bot started")
 
-bot = telebot.TeleBot(tokens_and_ids.token)
-channel_id = tokens_and_ids.channel_id
+bot = telebot.TeleBot(tokens_and_ids.get_creds()['token'])
+channel_id = tokens_and_ids.get_creds()['channel_id']
 
 
 def gen_inline_markup():
