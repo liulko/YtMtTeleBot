@@ -5,7 +5,7 @@ import tokens_and_ids
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import ytmusicapi2
 import telegraph_api
-from pytube.exceptions import AgeRestrictedError, VideoUnavailable
+from pytubefix.exceptions import AgeRestrictedError, VideoUnavailable
 
 print("bot started")
 
@@ -15,8 +15,9 @@ channel_id = tokens_and_ids.get_creds()['channel_id']
 
 def gen_inline_markup():
     markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(InlineKeyboardButton("Music", callback_data="cb_music"),
+    markup.row_width = 3
+    markup.add(InlineKeyboardButton("toChannel", callback_data="cb_toChannel"),
+               InlineKeyboardButton("toHere", callback_data="cb_toHere"),
                InlineKeyboardButton("No", callback_data="cb_no"))
     return markup
 
@@ -30,10 +31,12 @@ def gen_start_reply_markup():
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    if call.data == "cb_music":
+    if call.data == "cb_toChannel":
         bot.answer_callback_query(call.id, "Answer is Yes")
         answer = bot.send_message(call.message.chat.id, 'Send me link or title')
         bot.register_next_step_handler(answer, music_link_handler)
+    elif call.data == "cb_toHere":
+        answer = bot.send_message(call.message.chat.id, 'Send me link or title')
     elif call.data == "cb_no":
         bot.answer_callback_query(call.id, "Answer is No")
 
