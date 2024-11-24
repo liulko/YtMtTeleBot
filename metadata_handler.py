@@ -24,5 +24,3 @@ def add_tags(path_mp3, artist, title, file_cover_name):
     tags.add(TPE1(encoding=3, text=artist))
 
     tags.save(path_mp3)
-
-add_tags('2024_11_17__14_28_12_500/The Killers - Mr. Brightside.mp3', 'artist', 'title', '2024_11_17__14_28_12_500/The Killers - Mr. Brightside_cover.jpg')
