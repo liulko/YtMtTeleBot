@@ -1,7 +1,6 @@
 import random
 import pytubefix
 import requests
-import validators
 import datetime
 import os
 import metadata_handler
@@ -9,12 +8,8 @@ import video_converter
 
 
 def get_mp3(input_from_user):
-    if validators.url(input_from_user):
-        yt = pytubefix.YouTube(input_from_user)
-        print(yt.title)
-    else:
-        print(pytubefix.Search(input_from_user).results)
-        yt = pytubefix.Search(input_from_user).results[0]
+    yt = pytubefix.YouTube(input_from_user)
+    print(yt.title)
 
     video_url = 'https://music.youtube.com/watch?v=' + yt.vid_info['videoDetails']['videoId']
     video_id = yt.vid_info['videoDetails']['videoId']
