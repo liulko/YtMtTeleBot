@@ -19,7 +19,7 @@ def add_tags(path_mp3, artist, title, file_cover_name):
         )
     )
     print(f'adding tag TIT2 with text: {title}')
-    tags.add(TIT2(encoding=3, text=title + '|Æ'))
+    tags.add(TIT2(encoding=3, text=title + ' | Æ'))
     print(f'adding tag TPE1 with text: {artist}')
     tags.add(TPE1(encoding=3, text=artist))
 
