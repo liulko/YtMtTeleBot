@@ -1,9 +1,9 @@
 import requests
-import tokens_and_ids
+import creds
 import telegraph
 import ytmusicapi2
 
-access_token = tokens_and_ids.get_creds()['telegraph_token']
+access_token = creds.get_creds()['telegraph_token']
 
 telegraph = telegraph.Telegraph(access_token)
 

@@ -1,7 +1,7 @@
 import shutil
 import telebot
 from make_mp3 import get_mp3
-import tokens_and_ids
+import creds
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import ytmusicapi2
 import telegraph_api
@@ -10,8 +10,8 @@ from pytubefix.exceptions import AgeRestrictedError, VideoUnavailable
 
 print("bot started")
 
-bot = telebot.TeleBot(tokens_and_ids.get_creds()['token'])
-channel_id = tokens_and_ids.get_creds()['channel_id']
+bot = telebot.TeleBot(creds.get_creds()['token'])
+channel_id = creds.get_creds()['channel_id']
 
 
 def gen_inline_markup():
