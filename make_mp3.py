@@ -5,12 +5,9 @@ import datetime
 import os
 import metadata_handler
 import video_converter
-import bright_proxy
 
 
 def get_mp3(input_from_user):
-    proxies = bright_proxy.get_proxy()
-    print(proxies)
     yt = pytubefix.YouTube(input_from_user, use_po_token=True)
     print(yt.title)
 
