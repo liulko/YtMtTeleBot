@@ -3,12 +3,18 @@ import pytubefix
 import requests
 import datetime
 import os
+
+from pytubefix.extract import visitor_data
+
 import metadata_handler
 import video_converter
 
+import po_token_caller
 
 def get_mp3(input_from_user):
-    yt = pytubefix.YouTube(input_from_user, use_po_token=True)
+    filename = po_token_caller.getPOToken()
+
+    yt = pytubefix.YouTube(input_from_user, use_po_token=True, token_file=filename)
     print(yt.title)
 
     video_url = 'https://music.youtube.com/watch?v=' + yt.vid_info['videoDetails']['videoId']
