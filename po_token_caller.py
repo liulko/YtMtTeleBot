@@ -7,8 +7,14 @@ def getPOToken():
                                 f'{homeFolder}/.nvm/versions/node/v22.14.0/bin/youtube-po-token-generator'],
                                stdout=subprocess.PIPE)
     out = json.loads(process.communicate()[0].decode("utf-8"))
-    # print(out)
-    return {
+    out_dict = {
         'visitorData': out['visitorData'],
-        'poToken': out['poToken'],
+        'po_token': out['poToken'],
     }
+    # print(out)
+    with open('tokensfile.json', 'w', encoding='utf-8') as f:
+        json.dump(out_dict, f, ensure_ascii=False)
+
+    return 'tokensfile.json'
+
+print(getPOToken())
