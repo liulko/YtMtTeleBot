@@ -42,7 +42,7 @@ proglog==0.1.10
 pycparser==2.21
 pyproject_hooks==1.0.0
 pyTelegramBotAPI==4.14.0
-pytubefix==8.12.1
+pytubefix>=8.12.1
 rapidfuzz==3.5.2
 requests==2.31.0
 requests-toolbelt==1.0.0
@@ -51,7 +51,7 @@ shellingham==1.5.3
 telegraph==2.2.0
 terminaltables==3.1.10
 tomlkit==0.12.1
-tqdm==4.66.1
+tqdm==4.66.3
 trove-classifiers==2023.9.19
 upgrade-requirements==1.7.0
 urllib3==2.0.6

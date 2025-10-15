@@ -1,6 +1,9 @@
+import os
 import shutil
 import telebot
-from make_mp3 import get_mp3
+from numpy.core.defchararray import title
+
+from yt_dlp_downloader import download_video
 import creds
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import ytmusicapi2
@@ -33,11 +36,14 @@ def gen_start_reply_markup():
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     if call.data == "cb_toChannel":
+        # po_token_caller.get_po_token()
         bot.answer_callback_query(call.id, "sho, sho?")
         answer = bot.send_message(call.message.chat.id, 'Send me link from YouTube Music')
-        bot.register_next_step_handler(answer, music_link_handler)
+        bot.register_next_step_handler(answer, music_link_handler, channel_id)
     elif call.data == "cb_toHere":
-        answer = bot.send_message(call.message.chat.id, 'Send me link or title')
+        bot.answer_callback_query(call.id, "sho, sho?")
+        answer = bot.send_message(call.message.chat.id, 'Send me link from YouTube Music')
+        bot.register_next_step_handler(answer, music_link_handler, call.message.chat.id)
     elif call.data == "cb_no":
         bot.answer_callback_query(call.id, "Answer is No")
 
@@ -56,7 +62,7 @@ def get_signature(user):
         return 'signature'
 
 
-def music_link_handler(message):
+def music_link_handler(message, place_to_send):
     status_text_work_started            = f'😯 | work on {message.text}'
     status_text_downloading             = f'\n📦 | downloading...'
     status_text_downloaded              = f'\n✅ | audio downloaded'
@@ -79,7 +85,7 @@ def music_link_handler(message):
                                          disable_web_page_preview=True)
         # check entered text
         if validators.url(message.text):
-            mp3_info = get_mp3(message.text)
+            mp3_info = download_video(message.text)
         else:
             info_msg = bot.edit_message_text(info_msg.text + status_text_wrong_link,
                                              info_msg.chat.id,
@@ -125,11 +131,13 @@ def music_link_handler(message):
                    f"<a href='{mp3_info['video_url']}'>ytm link</a> | "
                    f"<a href='https://t.me/ytmt_bot'>{signature}</a>")
         audio_message = bot.send_audio(
-            channel_id,
+            place_to_send,
             audio_file,
             caption=caption,
             parse_mode='HTML',
             thumbnail=thumbnail_file,
+            performer=mp3_info['artist'],
+            title=mp3_info['title'],
             disable_notification=True
         )
         info_msg = bot.edit_message_text(info_msg.text + status_text_posted, info_msg.chat.id,
@@ -145,7 +153,8 @@ def music_link_handler(message):
         thumbnail_file.close()
         audio_file.close()
 
-        shutil.rmtree(mp3_info['folder_path'])
+        os.remove(mp3_info['mp3_path'])
+        os.remove(mp3_info['thumbnail_file_path'])
 
     except Exception as e:
         print(e)
