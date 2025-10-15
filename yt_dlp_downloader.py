@@ -42,7 +42,7 @@ def download_video(URL):
         'video_id': video_info['id'],
         'title': video_info['title'] + ' | Æ',
         'artist': video_info['artist'],
-        'mp3_path': f'[{video_info['id']}].mp3',
+        'mp3_path': f"[{video_info['id']}].mp3",
         # 'video_file_name': output_path,
         'thumbnail_file_path': thumbnail_file_path,
         'thumbnail_default': thumbnail_default
