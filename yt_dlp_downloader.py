@@ -19,6 +19,14 @@ def download_video(URL):
     ydl.download(URL)
 
     video_info = ydl.sanitize_info(ydl.extract_info(URL, download=False))
+
+    if 'artist' in video_info:
+        artist_name = video_info['artist']
+    else:
+        artist_name = video_info['channel']
+
+    # with open('video_info', 'w+', encoding='utf-8') as f:
+    #     f.write(str(video_info))
     # print(video_info)
 
     # get thumbnail
@@ -41,7 +49,7 @@ def download_video(URL):
         'video_url': 'https://music.youtube.com/watch?v=' + video_info['id'],
         'video_id': video_info['id'],
         'title': video_info['title'] + ' | Æ',
-        'artist': video_info['artist'],
+        'artist': artist_name,
         'mp3_path': f"[{video_info['id']}].mp3",
         # 'video_file_name': output_path,
         'thumbnail_file_path': thumbnail_file_path,
