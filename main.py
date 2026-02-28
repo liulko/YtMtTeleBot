@@ -4,17 +4,21 @@ import telebot
 from numpy.core.defchararray import title
 
 from yt_dlp_downloader import download_video
-import creds
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import ytmusicapi2
 import telegraph_api
 import validators
-from pytubefix.exceptions import AgeRestrictedError, VideoUnavailable
+from config import (
+    BOT_TOKEN,
+    CHANNEL_ID,
+    # якщо потрібно — PROXY_PASSWORD тощо
+)
+
 
 print("bot started")
 
-bot = telebot.TeleBot(creds.get_creds()['token'])
-channel_id = creds.get_creds()['channel_id']
+bot = telebot.TeleBot(BOT_TOKEN)
+channel_id = CHANNEL_ID
 
 
 def gen_inline_markup():
