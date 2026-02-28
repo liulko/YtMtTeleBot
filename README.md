@@ -1,6 +1,6 @@
 
 # YtMtTeleBot
 
-YouTube Music to Telegram Bot.
+YouTube Music to Telegram Channel via bot.
 
 
