@@ -1,7 +1,6 @@
 import os
 import shutil
 import telebot
-from numpy.core.defchararray import title
 
 from yt_dlp_downloader import download_video
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
