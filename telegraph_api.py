@@ -1,11 +1,9 @@
 import requests
-import creds
 import telegraph
 import ytmusicapi2
+from config import TELEGRAPH_TOKEN
 
-access_token = creds.get_creds()['telegraph_token']
-
-telegraph = telegraph.Telegraph(access_token)
+telegraph = telegraph.Telegraph(TELEGRAPH_TOKEN)
 
 endpoint = 'https://api.telegra.ph/'
 
