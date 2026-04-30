@@ -1,27 +1,30 @@
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
-load_dotenv()  # безпечно: якщо .env немає — просто ігнорується
+# Визначаємо кореневу папку проєкту
+BASE_DIR = Path(__file__).resolve().parent
 
-# ────────────────────────────────────────────────
-# Зчитування та перевірка обов'язкових змінних
-# ────────────────────────────────────────────────
+# Завантажуємо bot.env з правильним шляхом
+env_file = BASE_DIR / "bot.env"
+
+if not env_file.exists():
+    raise FileNotFoundError(f"Файл не знайдено: {env_file}")
+
+load_dotenv(env_file)
+
 def _get_or_raise(key: str) -> str:
     value = os.getenv(key)
     if value is None:
         raise ValueError(f"Обов'язкова змінна середовища відсутня: {key}")
     return value
 
-BOT_MODE = os.getenv("BOT_MODE", "production").lower()
 
-if BOT_MODE in ("production", "main", "prod"):
-    BOT_TOKEN           = _get_or_raise("BOT_TOKEN")
-    CHANNEL_ID      = int(_get_or_raise("MAIN_CHANNEL_ID"))
-    TELEGRAPH_TOKEN = _get_or_raise("MAIN_TELEGRAPH_TOKEN")
-else:
-    BOT_TOKEN           = _get_or_raise("BOT_TOKEN")
-    CHANNEL_ID      = int(_get_or_raise("TEST_CHANNEL_ID"))
-    TELEGRAPH_TOKEN = _get_or_raise("TEST_TELEGRAPH_TOKEN")
+# Зчитуємо змінні
+BOT_TOKEN           = _get_or_raise("BOT_TOKEN")
+CHANNEL_ID      = int(_get_or_raise("CHANNEL_ID"))
+TELEGRAPH_TOKEN = _get_or_raise("TELEGRAPH_TOKEN")
 
-
-
+print("✅ Конфігурація успішно завантажена з bot.env")
+print(f"   CHANNEL_ID = {CHANNEL_ID}")
+print(f"   BOT_TOKEN  = {BOT_TOKEN[:15]}...")
